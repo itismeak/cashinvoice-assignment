@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,6 +61,41 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(res);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<String>> handleAccessDenied(
+            AccessDeniedException ex) {
+
+        ApiResponse<String> response = new ApiResponse<>(
+                false,
+                "Access denied. You do not have permission to perform this action.",
+                null
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(response);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ApiResponse<String>> handleAuthenticationException(
+            AuthenticationException ex) {
+
+        ApiResponse<String> response = new ApiResponse<>(
+                false,
+                "Unauthorized. Please login to access this resource.",
+                null
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(response);
+    }
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ApiResponse<Object>> handleBadRequest(BadRequestException ex) {
+        return ResponseEntity.status(ex.getStatus())
+                .body(new ApiResponse<>(false, ex.getMessage(), null));
     }
 
     @ExceptionHandler(Exception.class)
