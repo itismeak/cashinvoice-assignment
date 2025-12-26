@@ -88,3 +88,27 @@ Camel Route 1 → JSON file (input/orders)
 Camel Route 2 → Validate → RabbitMQ
 ↓
 Camel Route 3 → Consume → Log
+
+
+
+*Important -  RabbitMQ docker-compose file*
+
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"      # RabbitMQ messaging port
+      - "15672:15672"    # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+volumes:
+  rabbitmq_data:
+
+  
